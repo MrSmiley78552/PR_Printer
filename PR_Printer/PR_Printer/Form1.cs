@@ -117,6 +117,13 @@ namespace PR_Printer
 
         private void accessDatabaseButton_Click(object sender, EventArgs e)
         {
+            if (meetIDTextBox.Text.Equals(""))
+            {
+                ErrorProvider errorProvider1 = new ErrorProvider();
+                errorProvider1.SetError(meetIDTextBox, "Must enter a meet ID");
+                Update();
+            }
+
             myConnectionString = @"Provider=Microsoft.Jet.OLEDB.4.0;" +
                       "Data Source="+ getCurrentDataSource() + ";" +
                       "Persist Security Info=True;" +
@@ -239,7 +246,10 @@ namespace PR_Printer
             string[] names = new string[2];
             // Open OleDb Connection
             OleDbConnection myConnection = new OleDbConnection();
-            myConnection.ConnectionString = myConnectionString;
+            myConnection.ConnectionString = @"Provider=Microsoft.Jet.OLEDB.4.0;" +
+                      "Data Source=" + getCurrentDataSource() + ";" +
+                      "Persist Security Info=True;" +
+                      "Jet OLEDB:Database Password=5hY-tek;"; ;
             myConnection.Open();
 
             //// Execute Queries
