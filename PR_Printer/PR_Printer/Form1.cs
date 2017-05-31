@@ -23,13 +23,14 @@ namespace PR_Printer
     public partial class Form1 : Form
     {
         //Globals
-        private string myConnectionString = @"Provider=Microsoft.Jet.OLEDB.4.0;" +
-                      "Data Source=C:\\Users\\Mitchell\\Desktop\\Davies Girls 2016.mdb;" +
-                      "Persist Security Info=True;" +
-                      "Jet OLEDB:Database Password=5hY-tek;";
+        private string myConnectionString = "";
         public Form1()
         {
             InitializeComponent();
+            this.ActiveControl = meetIDTextBox;
+            this.AcceptButton = accessDatabaseButton;
+            currentDataSourceLabel.Text = getCurrentDataSource();
+            myConnectionString = "";
         }
         
         /// <summary>
@@ -116,6 +117,11 @@ namespace PR_Printer
 
         private void accessDatabaseButton_Click(object sender, EventArgs e)
         {
+            myConnectionString = @"Provider=Microsoft.Jet.OLEDB.4.0;" +
+                      "Data Source="+ getCurrentDataSource() + ";" +
+                      "Persist Security Info=True;" +
+                      "Jet OLEDB:Database Password=5hY-tek;";
+
             List<string> individualPRs = new List<string>();
             List<string> relayStateQualifiers = new List<string>();
 
@@ -260,12 +266,30 @@ namespace PR_Printer
         {
             string[] meetInfo = new string[2];
             OleDbConnection myConnection = new OleDbConnection();
-            myConnection.ConnectionString = myConnectionString;
-            myConnection.Open();
+
+            bool invalidDB = true;
+            while(invalidDB)
+            {
+                try
+                {
+                    myConnection.ConnectionString = @"Provider=Microsoft.Jet.OLEDB.4.0;" +
+                      "Data Source=" + getCurrentDataSource() + ";" +
+                      "Persist Security Info=True;" +
+                      "Jet OLEDB:Database Password=5hY-tek;";
+                    myConnection.Open();
+                    invalidDB = false;
+                }
+                catch(Exception e5)
+                {
+                    MessageBox.Show("Choose a valid Database");
+                    setNewDataSource();
+                }
+            }
+            
 
             //// Execute Queries
             OleDbCommand cmd = myConnection.CreateCommand();
-            int meetID = Convert.ToInt32(meetIDTextBox.Text);
+            int meetID = validateMeetID();
 
             //gets all the new results from the meet------------------------------------------------------------
             cmd.CommandText = "select MNAME, START from MEET where MEET=@1";
@@ -283,10 +307,24 @@ namespace PR_Printer
             return meetInfo;
         }
 
+        private int validateMeetID()
+        {
+            int meetID = -1;
+            try
+            {
+                meetID = Convert.ToInt32(meetIDTextBox.Text);
+            }
+            catch (Exception e6)
+            {
+                MessageBox.Show("Enter a Meet ID");
+            }
+            return meetID;
+        }
+
         private void printPreview(List<string> prInfo)
         {
             string newPath = Directory.GetCurrentDirectory().Replace("bin\\Debug", "PersonalRecords\\");
-            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             Array.ForEach(Directory.GetFiles(@"" + newPath + "\\AthleteNameAdded\\"), File.Delete);
             string fileNameTemplate = @"" + newPath + "Template.pdf";
             string[] meetInfo = getMeetInfo();
@@ -415,7 +453,7 @@ namespace PR_Printer
             }
 
 
-            string[] files = GetFiles(@"" + desktopPath + "\\AthleteNameAdded");
+            string[] files = GetFiles(@"" + newPath + "\\AthleteNameAdded");
             PdfSharp.Pdf.PdfDocument outputDocument = new PdfSharp.Pdf.PdfDocument();
 
             foreach (string file in files)
@@ -431,13 +469,11 @@ namespace PR_Printer
                 }
             }
 
-            //-------------------------------------
-            //-------------------------------------
-            //------Should add something to change-
-            //------the name of the finished file--
-            //-------------------------------------
             // Save the document...
-            string concatenatedFileName = @"" + newPath + "\\PR_Cards\\" + "PR_Cards_For_" + meetInfo[0].Replace(' ', '_') + ".pdf";
+            string concatenatedFilePath = @"" + desktopPath + "\\PR_Cards\\";
+            if (!System.IO.Directory.Exists(concatenatedFilePath))
+                System.IO.Directory.CreateDirectory(concatenatedFilePath);
+            string concatenatedFileName = concatenatedFilePath + "PR_Cards_For_" + meetInfo[0].Replace(' ', '_') + ".pdf";
             try
             {
                 outputDocument.Save(concatenatedFileName);
@@ -516,6 +552,38 @@ namespace PR_Printer
                     list.Add(info.FullName);
             }
             return (string[])list.ToArray(typeof(string));
+        }
+
+        private void changeDataSource_Click(object sender, EventArgs e)
+        {
+            setNewDataSource();
+            currentDataSourceLabel.Text = getCurrentDataSource();
+        }
+
+        private void setNewDataSource()
+        {
+            DialogResult result = openFileDialog1.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                string file = openFileDialog1.FileName;
+                using (StreamWriter wr = new StreamWriter("Data_Source.txt"))
+                {
+                    wr.WriteLine(file);
+                }
+            }
+        }
+        
+        private string getCurrentDataSource()
+        {
+            string currentDataSource = "";
+            using (StreamReader sr = new StreamReader("Data_Source.txt"))
+            {
+                currentDataSource = sr.ReadLine();
+            }
+            if (currentDataSource == null)
+                return "NONE";
+            else
+                return currentDataSource;
         }
     }
 }
