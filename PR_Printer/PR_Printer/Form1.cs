@@ -153,7 +153,7 @@ namespace PR_Printer
                                     relayStateQualifiers.Add("");
                                     relayStateQualifiers.Add("");
                                     relayStateQualifiers.Add(newlyEnteredResults[i + 3] + "m " + getRace(newlyEnteredResults[i + 1], Convert.ToInt32(newlyEnteredResults[i + 3]), Convert.ToInt32(newlyEnteredResults[i + 4]), Convert.ToInt32(newlyEnteredResults[i + 6])));
-                                    relayStateQualifiers.Add(Convert.ToString(newlyEnteredResults[i + 3]));
+                                    relayStateQualifiers.Add(Convert.ToString(newlyEnteredResults[i + 2]));
                                 }
                             }
                         }
@@ -339,25 +339,8 @@ namespace PR_Printer
                             x2 = x2 + 8;
                         }
 
-                        string mark = "";
-                        if(Convert.ToInt32(prInfoArray[i + 3]) < 0)
-                        {
-                            int feet = Math.Abs(Convert.ToInt32(prInfoArray[i + 3])) / 12;
-                            int inches = Math.Abs(Convert.ToInt32(prInfoArray[i + 3])) % 12;
-                            mark = feet + "' " + inches + "\"";
-                        }
-                        else
-                        {
-                            int minutes = Convert.ToInt32(prInfoArray[i + 3].Substring(0, prInfoArray[i + 3].Length - 2)) / 60;
-                            int seconds = Convert.ToInt32(prInfoArray[i + 3].Substring(0, prInfoArray[i + 3].Length - 2)) % 60;
-                            int hundreths = Convert.ToInt32(prInfoArray[i + 3].Substring(prInfoArray[i + 3].Length - 2));
-                            if (minutes != 0)
-                                mark = minutes + ":" + seconds + ":" + hundreths;
-                            else
-                                mark = seconds + ":" + hundreths;
-                        }
                         //adds in the time/distance
-                        contentByte.ShowTextAligned(PdfContentByte.ALIGN_CENTER, prInfoArray[i + 3], x2 + 20, 537, 0);
+                        contentByte.ShowTextAligned(PdfContentByte.ALIGN_CENTER, formatMark(prInfoArray, i, 3), x2 + 30, 537, 0);
 
                         //adds in the meet name
                         int x5 = 157;
@@ -404,6 +387,9 @@ namespace PR_Printer
                                 contentByte.ShowTextAligned(PdfContentByte.ALIGN_CENTER, line.ToString(), x7, 122, 0);
                                 x7 = x7 + 8;
                             }
+
+                            //adds in the time/distance
+                            contentByte.ShowTextAligned(PdfContentByte.ALIGN_CENTER, formatMark(prInfoArray, i, 7), x2 + 30, 149, 0);
 
                             //adds in the meet date
                             int x8 = 240;
@@ -484,7 +470,56 @@ namespace PR_Printer
             Array.ForEach(Directory.GetFiles(@"" + newPath + "\\Final_SignatureAndAthlete\\"), File.Delete);
         }
 
+        private string formatMark(string[] prInfoArray, int blockPosition, int positionOfMark)
+        {
+            string shortRawMark = prInfoArray[blockPosition + positionOfMark].Substring(0, prInfoArray[blockPosition + positionOfMark].Length - 2);
+            string fractionOfMark = prInfoArray[blockPosition + positionOfMark].Substring(prInfoArray[blockPosition + positionOfMark].Length - 2);
 
+            if (Convert.ToInt32(prInfoArray[blockPosition + positionOfMark]) < 0)
+            {
+                int feet = Math.Abs(Convert.ToInt32(shortRawMark)) / 12;
+                int inches = Math.Abs(Convert.ToInt32(shortRawMark)) % 12;
+                return feet + "' " + inches + "." + fractionOfMark + "''";
+            }
+            else
+            {
+                int minutes = Convert.ToInt32(shortRawMark) / 60;
+                int seconds = Convert.ToInt32(shortRawMark) % 60;
+
+                if (minutes != 0)
+                    return minutes + ":" + formatSeconds(seconds) + "." + fractionOfMark;
+                else
+                    return seconds + "." + fractionOfMark;
+            }
+        }
+
+        private string formatSeconds(int seconds)
+        {
+            switch(seconds)
+            {
+                case 1:
+                    return "01";
+                case 2:
+                    return "02";
+                case 3:
+                    return "03";
+                case 4:
+                    return "04";
+                case 5:
+                    return "05";
+                case 6:
+                    return "06";
+                case 7:
+                    return "07";
+                case 8:
+                    return "08";
+                case 9:
+                    return "09";
+                case 0:
+                    return "00";
+            }
+            return seconds + "";                    
+        }
         private void retrieveDataButton_Click(object sender, EventArgs e)
         {
             //connection.Open();
