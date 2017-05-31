@@ -30,9 +30,7 @@
         {
             this.accessDatabaseButton = new System.Windows.Forms.Button();
             this.accessDatabaseLabel = new System.Windows.Forms.Label();
-            this.retrieveDataButton = new System.Windows.Forms.Button();
             this.printDialog1 = new System.Windows.Forms.PrintDialog();
-            this.printPreviewButton = new System.Windows.Forms.Button();
             this.meetIDTextBox = new System.Windows.Forms.TextBox();
             this.meetIDLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
@@ -56,29 +54,9 @@
             this.accessDatabaseLabel.TabIndex = 1;
             this.accessDatabaseLabel.Text = "label1";
             // 
-            // retrieveDataButton
-            // 
-            this.retrieveDataButton.Location = new System.Drawing.Point(12, 76);
-            this.retrieveDataButton.Name = "retrieveDataButton";
-            this.retrieveDataButton.Size = new System.Drawing.Size(111, 23);
-            this.retrieveDataButton.TabIndex = 2;
-            this.retrieveDataButton.Text = "Retrieve Data";
-            this.retrieveDataButton.UseVisualStyleBackColor = true;
-            this.retrieveDataButton.Click += new System.EventHandler(this.retrieveDataButton_Click);
-            // 
             // printDialog1
             // 
             this.printDialog1.UseEXDialog = true;
-            // 
-            // printPreviewButton
-            // 
-            this.printPreviewButton.Location = new System.Drawing.Point(12, 163);
-            this.printPreviewButton.Name = "printPreviewButton";
-            this.printPreviewButton.Size = new System.Drawing.Size(111, 23);
-            this.printPreviewButton.TabIndex = 3;
-            this.printPreviewButton.Text = "Print Preview";
-            this.printPreviewButton.UseVisualStyleBackColor = true;
-            this.printPreviewButton.Click += new System.EventHandler(this.printPreviewButton_Click);
             // 
             // meetIDTextBox
             // 
@@ -103,8 +81,6 @@
             this.ClientSize = new System.Drawing.Size(340, 283);
             this.Controls.Add(this.meetIDLabel);
             this.Controls.Add(this.meetIDTextBox);
-            this.Controls.Add(this.printPreviewButton);
-            this.Controls.Add(this.retrieveDataButton);
             this.Controls.Add(this.accessDatabaseLabel);
             this.Controls.Add(this.accessDatabaseButton);
             this.Name = "Form1";
@@ -118,9 +94,7 @@
 
         private System.Windows.Forms.Button accessDatabaseButton;
         private System.Windows.Forms.Label accessDatabaseLabel;
-        private System.Windows.Forms.Button retrieveDataButton;
         private System.Windows.Forms.PrintDialog printDialog1;
-        private System.Windows.Forms.Button printPreviewButton;
         private System.Windows.Forms.TextBox meetIDTextBox;
         private System.Windows.Forms.Label meetIDLabel;
     }

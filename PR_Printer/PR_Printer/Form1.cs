@@ -286,6 +286,8 @@ namespace PR_Printer
         private void printPreview(List<string> prInfo)
         {
             string newPath = Directory.GetCurrentDirectory().Replace("bin\\Debug", "PersonalRecords\\");
+            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            Array.ForEach(Directory.GetFiles(@"" + newPath + "\\AthleteNameAdded\\"), File.Delete);
             string fileNameTemplate = @"" + newPath + "Template.pdf";
             string[] meetInfo = getMeetInfo();
             int textSpacing = 7;
@@ -298,10 +300,6 @@ namespace PR_Printer
                 {
                     int fileCount_Ath = Directory.GetFiles(newPath + "\\AthleteNameAdded", "*", SearchOption.TopDirectoryOnly).Length;
                     string fileNameAthleteAdded = @"" + newPath + "\\AthleteNameAdded\\testAthleteAddedCopy" + fileCount_Ath + ".pdf";
-
-                    int fileCount_Sig_Ath = Directory.GetFiles(newPath + "\\Final_SignatureAndAthlete", "*", SearchOption.TopDirectoryOnly).Length;
-                    string fileNameSignatureAndAthleteAdded = @"" + newPath + "\\Final_SignatureAndAthlete\\testFinal_PR_Card" + fileCount_Sig_Ath + ".pdf";
-
 
                     using (var reader = new iTextSharp.text.pdf.PdfReader(@"" + fileNameTemplate))
                     using (var fileStream = new FileStream(@"" + fileNameAthleteAdded, FileMode.Create, FileAccess.Write))
@@ -382,6 +380,9 @@ namespace PR_Printer
                                 x4 = x4 + textSpacing;
                             }
 
+                            //adds in the time/distance
+                            contentByte.ShowTextAligned(textAlignment, formatMark(prInfoArray, i, 7), x4 + 30, 149, 0);
+
                             //adds in the meet name
                             int x7 = 157;
                             foreach (var line in meetInfo[0])
@@ -389,9 +390,6 @@ namespace PR_Printer
                                 contentByte.ShowTextAligned(textAlignment, line.ToString(), x7, 122, 0);
                                 x7 = x7 + textSpacing;
                             }
-
-                            //adds in the time/distance
-                            contentByte.ShowTextAligned(textAlignment, formatMark(prInfoArray, i, 7), x2 + 30, 149, 0);
 
                             //adds in the meet date
                             int x8 = 240;
@@ -412,28 +410,12 @@ namespace PR_Printer
                         {
                             
                         }
-
-                        //
-                        //add signature here
-                        //using (Stream inputPdfStream = new FileStream(@"" + fileNameAthleteAdded, FileMode.Open, FileAccess.Read, FileShare.Read))
-                        //using (Stream inputImageStream = new FileStream("../../Resources/Signature.jpg", FileMode.Open, FileAccess.Read, FileShare.Read))
-                        //using (Stream outputPdfStream = new FileStream(@"" + fileNameSignatureAndAthleteAdded, FileMode.Create, FileAccess.Write, FileShare.None))
-                        //{
-                        //    var reader2 = new iTextSharp.text.pdf.PdfReader(inputPdfStream);
-                        //    var stamper = new PdfStamper(reader2, outputPdfStream);
-                        //    var pdfContentByte = stamper.GetOverContent(1);
-
-                        //    iTextSharp.text.Image image = iTextSharp.text.Image.GetInstance(inputImageStream);
-                        //    image.SetAbsolutePosition(100, 100);
-                        //    //pdfContentByte.AddImage(image);
-                        //    stamper.Close();
-                        //}
                     }
                 }
             }
 
 
-            string[] files = GetFiles(@"" + newPath + "\\AthleteNameAdded");
+            string[] files = GetFiles(@"" + desktopPath + "\\AthleteNameAdded");
             PdfSharp.Pdf.PdfDocument outputDocument = new PdfSharp.Pdf.PdfDocument();
 
             foreach (string file in files)
@@ -455,7 +437,7 @@ namespace PR_Printer
             //------the name of the finished file--
             //-------------------------------------
             // Save the document...
-            string concatenatedFileName = @"" + newPath + "ConcatenatedDocument1.pdf";
+            string concatenatedFileName = @"" + newPath + "\\PR_Cards\\" + "PR_Cards_For_" + meetInfo[0].Replace(' ', '_') + ".pdf";
             try
             {
                 outputDocument.Save(concatenatedFileName);
@@ -467,9 +449,8 @@ namespace PR_Printer
                 MessageBox.Show("Please close PDF documents.");
             }
 
-            //empty the temporary folders
+            //empty the temporary folder
             Array.ForEach(Directory.GetFiles(@"" + newPath + "\\AthleteNameAdded\\"), File.Delete);
-            Array.ForEach(Directory.GetFiles(@"" + newPath + "\\Final_SignatureAndAthlete\\"), File.Delete);
         }
 
         private string formatMark(string[] prInfoArray, int blockPosition, int positionOfMark)
@@ -521,148 +502,7 @@ namespace PR_Printer
                     return "00";
             }
             return seconds + "";                    
-        }
-        private void retrieveDataButton_Click(object sender, EventArgs e)
-        {
-            //connection.Open();
-            //OleDbCommand command = new OleDbCommand();
-            //command.Connection = connection;
-            //command.CommandText = "SELECT TOP 1 FROM Records WHERE name=";
-
-            //OleDbDataReader reader = command.ExecuteReader();
-            //while(reader.Read())
-            //{
-            //    var testVariable = reader.GetString(1);
-            //}
-
-            //connection.Close();l
-        }
-
-        
-
-        ///<summary>Copies the Template.pdf and
-        ///edits the copy to contain the athlete's
-        ///name and Rory's signature.
-        ///
-        /// Have this code execute to create all custom PR cards.
-        ///</summary>
-        private void printPreviewButton_Click(object sender, EventArgs e)
-        {
-            string newPath = Directory.GetCurrentDirectory().Replace("bin\\Debug", "PersonalRecords\\");
-            string fileNameTemplate = @"" + newPath + "Template.pdf";
-
-
-            //allNewRecords is an array containing /WHO/ set or tied a PR in /WHAT/
-            //also contains relays that have qualified for state. The /WHO/ and in /WHAT/
-            //example
-            string[,] allNewRecords = { { "Mitchell Kollodge", "110 Meter Hurdles" }, { "Jon Jacobs", "200 Meter Dash" }, { "Drew Dosh", "400 Meter Dash" } };
-            for(int i = 0; i < allNewRecords.GetLength(0); i++)
-            {
-                int fileCount_Ath = Directory.GetFiles(newPath + "\\AthleteNameAdded", "*", SearchOption.TopDirectoryOnly).Length;
-                string fileNameAthleteAdded = @"" + newPath + "\\AthleteNameAdded\\testAthleteAddedCopy" + fileCount_Ath + ".pdf";
-
-                int fileCount_Sig_Ath = Directory.GetFiles(newPath + "\\Final_SignatureAndAthlete", "*", SearchOption.TopDirectoryOnly).Length;
-                string fileNameSignatureAndAthleteAdded = @"" + newPath + "\\Final_SignatureAndAthlete\\testFinal_PR_Card" + fileCount_Sig_Ath + ".pdf";
-
-
-                using (var reader = new iTextSharp.text.pdf.PdfReader(@"" + fileNameTemplate))
-                using (var fileStream = new FileStream(@"" + fileNameAthleteAdded, FileMode.Create, FileAccess.Write))
-                {
-                    var document = new Document(reader.GetPageSizeWithRotation(1));
-                    var writer = PdfWriter.GetInstance(document, fileStream);
-
-                    document.Open();
-
-                    document.NewPage();
-
-                    var baseFont = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
-                    var importedPage = writer.GetImportedPage(reader, 1);
-
-                    var contentByte = writer.DirectContent;
-                    contentByte.BeginText();
-                    contentByte.SetFontAndSize(baseFont, 12);
-
-                    //text to be added---The /NAME/
-                    var athleteName = allNewRecords[i, 0];
-                    //adds in the text
-                    int x = 200;
-                    foreach (var line in athleteName)
-                    {
-                        contentByte.ShowTextAligned(PdfContentByte.ALIGN_LEFT, line.ToString(), x, 500, 0);
-                        x = x + 10;
-                    }
-
-                    var trackEvent = allNewRecords[i, 1];
-                    //adds in the text
-                    int x2 = 200;
-                    foreach(var line in trackEvent)
-                    {
-                        contentByte.ShowTextAligned(PdfContentByte.ALIGN_LEFT, line.ToString(), x2, 470, 0);
-                        x2 = x2 + 10;
-                    }
-
-                    contentByte.EndText();
-                    contentByte.AddTemplate(importedPage, 0, 0);
-
-
-                    document.Close();
-                    writer.Close();
-
-                    //add signature here
-                    using (Stream inputPdfStream = new FileStream(@"" + fileNameAthleteAdded, FileMode.Open, FileAccess.Read, FileShare.Read))
-                    using (Stream inputImageStream = new FileStream("../../Resources/Signature.jpg", FileMode.Open, FileAccess.Read, FileShare.Read))
-                    using (Stream outputPdfStream = new FileStream(@"" + fileNameSignatureAndAthleteAdded, FileMode.Create, FileAccess.Write, FileShare.None))
-                    {
-                        var reader2 = new iTextSharp.text.pdf.PdfReader(inputPdfStream);
-                        var stamper = new PdfStamper(reader2, outputPdfStream);
-                        var pdfContentByte = stamper.GetOverContent(1);
-
-                        iTextSharp.text.Image image = iTextSharp.text.Image.GetInstance(inputImageStream);
-                        image.SetAbsolutePosition(100, 100);
-                        pdfContentByte.AddImage(image);
-                        stamper.Close();
-                    }
-                }
-            }
-
-            string[] files = GetFiles(@"" + newPath + "\\Final_SignatureAndAthlete");
-            PdfSharp.Pdf.PdfDocument outputDocument = new PdfSharp.Pdf.PdfDocument();
-
-            foreach (string file in files)
-            {
-                PdfSharp.Pdf.PdfDocument inputDocument = PdfSharp.Pdf.IO.PdfReader.Open(file, PdfDocumentOpenMode.Import);
-                int count = inputDocument.PageCount;
-                for (int idx = 0; idx < count; idx++)
-                {
-                    // Get the page from the external document...
-                    PdfSharp.Pdf.PdfPage page = inputDocument.Pages[idx];
-                    // ...and add it to the output document.
-                    outputDocument.AddPage(page);
-                }
-            }
-
-            //-------------------------------------
-            //-------------------------------------
-            //------Should add something to change-
-            //------the name of the finished file--
-            //-------------------------------------
-            // Save the document...
-            string concatenatedFileName = @"" + newPath + "ConcatenatedDocument1.pdf";
-            try
-            {
-                outputDocument.Save(concatenatedFileName);
-                // ...and start a viewer.
-                Process.Start(concatenatedFileName);
-            }
-            catch(Exception e3)
-            {
-                MessageBox.Show("Please close PDF documents.");
-            }
-            
-            //empty the temporary folders
-            Array.ForEach(Directory.GetFiles(@"" + newPath + "\\AthleteNameAdded\\"), File.Delete);
-            Array.ForEach(Directory.GetFiles(@"" + newPath + "\\Final_SignatureAndAthlete\\"), File.Delete);
-        }
+        }        
 
         static string[] GetFiles(string path)
         {
