@@ -288,6 +288,8 @@ namespace PR_Printer
             string newPath = Directory.GetCurrentDirectory().Replace("bin\\Debug", "PersonalRecords\\");
             string fileNameTemplate = @"" + newPath + "Template.pdf";
             string[] meetInfo = getMeetInfo();
+            int textSpacing = 7;
+            int textAlignment = PdfContentByte.ALIGN_CENTER;
 
             string[] prInfoArray = prInfo.ToArray();
             for(int i = 0; i < prInfoArray.Length - 1; i++)
@@ -325,8 +327,8 @@ namespace PR_Printer
                         int x = 225;
                         foreach (var line in athleteName)
                         {
-                            contentByte.ShowTextAligned(PdfContentByte.ALIGN_CENTER, line.ToString(), x, 593, 0);
-                            x = x + 8;
+                            contentByte.ShowTextAligned(textAlignment, line.ToString(), x, 593, 0);
+                            x = x + textSpacing;
                         }
 
                         var trackEvent = prInfoArray[i + 2];
@@ -335,27 +337,27 @@ namespace PR_Printer
                         int x2 = 157;
                         foreach (var line in trackEvent)
                         {
-                            contentByte.ShowTextAligned(PdfContentByte.ALIGN_CENTER, line.ToString(), x2, 537, 0);
-                            x2 = x2 + 8;
+                            contentByte.ShowTextAligned(textAlignment, line.ToString(), x2, 537, 0);
+                            x2 = x2 + textSpacing;
                         }
 
                         //adds in the time/distance
-                        contentByte.ShowTextAligned(PdfContentByte.ALIGN_CENTER, formatMark(prInfoArray, i, 3), x2 + 30, 537, 0);
+                        contentByte.ShowTextAligned(textAlignment, formatMark(prInfoArray, i, 3), x2 + 30, 537, 0);
 
                         //adds in the meet name
                         int x5 = 157;
                         foreach (var line in meetInfo[0])
                         {
-                            contentByte.ShowTextAligned(PdfContentByte.ALIGN_CENTER, line.ToString(), x5, 510, 0);
-                            x5 = x5 + 8;
+                            contentByte.ShowTextAligned(textAlignment, line.ToString(), x5, 510, 0);
+                            x5 = x5 + textSpacing;
                         }
 
                         //adds in the meet date
                         int x6 = 240;
                         foreach (var line in meetDate)
                         {
-                            contentByte.ShowTextAligned(PdfContentByte.ALIGN_CENTER, line.ToString(), x6, 483, 0);
-                            x6 = x6 + 8;
+                            contentByte.ShowTextAligned(textAlignment, line.ToString(), x6, 483, 0);
+                            x6 = x6 + textSpacing;
                         }
 
 
@@ -367,8 +369,8 @@ namespace PR_Printer
                             int x3 = 225;
                             foreach (var line in athleteName2)
                             {
-                                contentByte.ShowTextAligned(PdfContentByte.ALIGN_CENTER, line.ToString(), x3, 205, 0);
-                                x3 = x3 + 8;
+                                contentByte.ShowTextAligned(textAlignment, line.ToString(), x3, 205, 0);
+                                x3 = x3 + textSpacing;
                             }
 
                             var trackEvent2 = prInfoArray[i + 6];
@@ -376,27 +378,27 @@ namespace PR_Printer
                             int x4 = 157;
                             foreach (var line in trackEvent2)
                             {
-                                contentByte.ShowTextAligned(PdfContentByte.ALIGN_CENTER, line.ToString(), x4, 149, 0);
-                                x4 = x4 + 8;
+                                contentByte.ShowTextAligned(textAlignment, line.ToString(), x4, 149, 0);
+                                x4 = x4 + textSpacing;
                             }
 
                             //adds in the meet name
                             int x7 = 157;
                             foreach (var line in meetInfo[0])
                             {
-                                contentByte.ShowTextAligned(PdfContentByte.ALIGN_CENTER, line.ToString(), x7, 122, 0);
-                                x7 = x7 + 8;
+                                contentByte.ShowTextAligned(textAlignment, line.ToString(), x7, 122, 0);
+                                x7 = x7 + textSpacing;
                             }
 
                             //adds in the time/distance
-                            contentByte.ShowTextAligned(PdfContentByte.ALIGN_CENTER, formatMark(prInfoArray, i, 7), x2 + 30, 149, 0);
+                            contentByte.ShowTextAligned(textAlignment, formatMark(prInfoArray, i, 7), x2 + 30, 149, 0);
 
                             //adds in the meet date
                             int x8 = 240;
                             foreach (var line in meetDate)
                             {
-                                contentByte.ShowTextAligned(PdfContentByte.ALIGN_CENTER, line.ToString(), x8, 95, 0);
-                                x8 = x8 + 8;
+                                contentByte.ShowTextAligned(textAlignment, line.ToString(), x8, 95, 0);
+                                x8 = x8 + textSpacing;
                             }
 
                             contentByte.EndText();
